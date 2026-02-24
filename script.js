@@ -171,18 +171,12 @@ async function loadRandomAyat() {
     const surat = d.data.info.surat.nama.id;
 
     // Tambah spasi di awal & akhir biar loop mulus
-    const teks = `     ${arti} — (QS. ${surat}:${nomor})     `;
-
-    runningAyatEl.textContent = teks;
-
-    // Hitung durasi berdasarkan panjang teks (skala realistis)
+    const teks = `${arti} — (QS. ${surat}:${nomor})`;
     const panjang = teks.length;
-    let durasi = Math.max(20, Math.min(60, panjang * 0.35)); // 0.35 detik per karakter
-
-    // Reset animasi dengan benar
+    const durasi = Math.max(14, Math.min(38, panjang * 0.20));  
+    runningAyatEl.textContent = teks;
     runningAyatEl.style.animation = "none";
-    runningAyatEl.offsetHeight; // force reflow
-
+    runningAyatEl.offsetHeight;
     runningAyatEl.style.animation = `scrollText ${durasi}s linear infinite`;
 
   } catch (err) {
