@@ -1,0 +1,134 @@
+body {
+  background: #111;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* =========================
+   CARD STYLE
+========================= */
+.card {
+  background: #1c1c1c;
+  border: 1px solid #2c2c2c;
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+/* =========================
+   JADWAL LIST 
+========================= */
+.schedule-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #2a2a2a;
+  font-size: 0.95rem;
+  color: #ffffff;             
+}
+
+.schedule-item span {
+  color: #ffffff;              
+}
+
+.schedule-item:last-child {
+  border-bottom: none;
+}
+
+/* Highlight waktu terdekat */
+.schedule-item.active {
+  background: #2c2c2c;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #ffc107;              
+}
+
+.schedule-item.active span {
+  color: #ffc107;              
+}
+
+.schedule-item i {
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+/* =========================
+   COUNTDOWN
+========================= */
+#nextName {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+#countdown {
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+/* =========================
+   SOURCE TEXT
+========================= */
+.text-source {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.text-source a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+/* =========================
+   RUNNING AYAT
+========================= */
+
+.running-card {
+  background: #1c1c1c;
+  border: 1px solid #2c2c2c;
+  overflow: hidden;
+  min-height: 2.8rem;
+  display: flex;
+  align-items: center;
+}
+
+#runningAyat {
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;             
+  padding-left: 100%;         
+  animation: scrollText 25s linear infinite;
+  text-shadow: 0 0 6px rgba(255,255,255,0.2); 
+}
+
+
+#runningAyat .arab {
+  color: #38bdf8;              
+  font-weight: 600;
+}
+
+
+@keyframes scrollText {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* =========================
+   INPUT STYLE
+========================= */
+#kotaFilter,
+#kotaSelect {
+  background: #1f1f1f;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+#kotaFilter::placeholder {
+  color: #888;
+}
+
+/* =========================
+   MOBILE OPTIMIZATION
+========================= */
+@media (max-width: 480px) {
+  #countdown { font-size: 1.8rem; }
+  .schedule-item { font-size: 0.85rem; }
+}
