@@ -166,17 +166,33 @@ h2 {
   border: 1px solid var(--bg-hover);
 }
 
+.running-card {
+  overflow: hidden;
+  background: var(--bg-card);
+  padding: 12px 0;
+  border-radius: 8px;
+  border: 1px solid var(--bg-hover);
+  margin-top: 12px;
+}
+
 #runningAyat {
   display: inline-block;
-  padding-left: 100%;
+  white-space: nowrap;
   color: var(--text-main);
   font-size: 14px;
-  animation: scrollText 30s linear infinite;
+  padding-left: 100%;               /* mulai dari kanan */
+  animation: scrollText 35s linear infinite;
+  will-change: transform;           /* optimasi performa */
 }
 
 @keyframes scrollText {
-  from { transform: translateX(0); }
-  to { transform: translateX(-100%); }
+  0% {    transform: translateX(0);  }
+  100% {    transform: translateX(-100%);  }
+}
+
+/* Optional: tambah efek pause di ujung (lebih natural) */
+#runningAyat.paused {
+  animation-play-state: paused;
 }
 
 /* ===============================
