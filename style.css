@@ -37,36 +37,22 @@ h2 {
 /* ===============================
    INPUT & BUTTON
 =================================*/
-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--bg-hover);
-  background: var(--bg-card);
-  color: var(--text-main);
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-input::placeholder {
-  color: var(--text-muted);
+.form-group input {
+  flex: 1;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 
-button {
-  width: 20%;
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 8px;
-  border: none;
-  background: var(--primary);
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
+/* tombol bulat sejempol */
 .btn-lokasi {
   width: 42px;
   height: 42px;
