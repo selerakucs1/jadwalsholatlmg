@@ -6,8 +6,8 @@
       "destination": "https://kss.simkss.my.id/sholat"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "https://kss.simkss.my.id/sholat/$1"
+      "source": "/(.*)",
+      "destination": "https://kss.simkss.my.id/$1"
     }
   ]
 }
