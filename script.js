@@ -85,7 +85,7 @@ function renderJadwal() {
   });
 }
 
-// ================= COUNTDOWN + HIGHLIGHT =================
+// ================= COUNTDOWN + HIGHLIGHT (FIX LINTAS HARI) =================
 function startCountdown() {
   if (countdownInterval) clearInterval(countdownInterval);
 
@@ -93,47 +93,62 @@ function startCountdown() {
     if (!currentJadwal) return;
 
     const now = new Date();
+
     const todayStr =
       now.getFullYear() + "-" +
       String(now.getMonth() + 1).padStart(2, "0") + "-" +
       String(now.getDate()).padStart(2, "0");
 
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+
+    const tomorrowStr =
+      tomorrow.getFullYear() + "-" +
+      String(tomorrow.getMonth() + 1).padStart(2, "0") + "-" +
+      String(tomorrow.getDate()).padStart(2, "0");
+
     const waktu = [
+      { nama: "Imsak", jam: currentJadwal.imsak },
       { nama: "Subuh", jam: currentJadwal.subuh },
+      { nama: "Terbit", jam: currentJadwal.terbit },
+      { nama: "Dhuha", jam: currentJadwal.dhuha },
       { nama: "Dzuhur", jam: currentJadwal.dzuhur },
       { nama: "Ashar", jam: currentJadwal.ashar },
       { nama: "Maghrib", jam: currentJadwal.maghrib },
       { nama: "Isya", jam: currentJadwal.isya }
     ];
 
-    let next = null;
-    let activeIndex = 0;
+    let jadwalDenganTanggal = [];
 
-    for (let i = 0; i < waktu.length; i++) {
-      const target = new Date(`${todayStr}T${waktu[i].jam}:00`);
+    waktu.forEach((w, i) => {
+      let target = new Date(`${todayStr}T${w.jam}:00`);
 
-      if (target > now && !next) {
-        next = { ...waktu[i], target };
+      // Jika sudah lewat semua waktu dan ini Subuh, jadikan besok
+      if (w.nama === "Subuh" && now > target) {
+        target = new Date(`${tomorrowStr}T${w.jam}:00`);
       }
 
-      const nextTime =
-        i < waktu.length - 1
-          ? new Date(`${todayStr}T${waktu[i + 1].jam}:00`)
-          : null;
+      jadwalDenganTanggal.push({
+        ...w,
+        target
+      });
+    });
 
-      if (now >= target && (!nextTime || now < nextTime)) {
-        activeIndex = i;
-      }
-    }
+    // Urutkan berdasarkan waktu target
+    jadwalDenganTanggal.sort((a, b) => a.target - b.target);
+
+    // ================= CARI NEXT =================
+    let next = jadwalDenganTanggal.find(j => j.target > now);
 
     if (!next) {
-      next = {
-        ...waktu[0],
-        target: new Date(`${todayStr}T${waktu[0].jam}:00`)
-      };
+      // fallback aman (tidak minus)
+      next = jadwalDenganTanggal[0];
     }
 
-    const diff = next.target - now;
+    // ================= COUNTDOWN =================
+    let diff = next.target - now;
+    if (diff < 0) diff = 0;
+
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
@@ -145,18 +160,33 @@ function startCountdown() {
 
     nextNameEl.textContent = `Menuju ${next.nama}`;
 
-    updateActivePrayer(activeIndex);
+    // ================= HIGHLIGHT =================
+    updateActiveByTime(now, jadwalDenganTanggal);
+
   }, 1000);
 }
 
-// ================= UPDATE ACTIVE =================
-function updateActivePrayer(index) {
+function updateActiveByTime(now, jadwal) {
   const items = document.querySelectorAll(".schedule-item");
-
   items.forEach(item => item.classList.remove("active"));
 
-  if (items[index]) {
-    items[index].classList.add("active");
+  for (let i = 0; i < jadwal.length; i++) {
+
+    const current = jadwal[i];
+    const next = jadwal[i + 1];
+
+    if (next) {
+      if (now >= current.target && now < next.target) {
+        if (items[i]) items[i].classList.add("active");
+        return;
+      }
+    } else {
+      // Ini adalah Isya terakhir
+      if (now >= current.target) {
+        if (items[i]) items[i].classList.add("active");
+        return;
+      }
+    }
   }
 }
 
