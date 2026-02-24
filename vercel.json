@@ -1,1 +1,13 @@
-https://kss.simkss.my.id/sholat
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/harga",
+      "destination": "https://kss.simkss.my.id/sholat"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "https://kss.simkss.my.id/sholat/$1"
+    }
+  ]
+}
