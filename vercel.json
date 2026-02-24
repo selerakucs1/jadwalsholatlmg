@@ -1,8 +1,9 @@
 {
+  "version": 2,
   "rewrites": [
     {
-      "source": "/sholat",
-      "destination": "https://kss.simkss.my.id/:path*"
+      "source": "/harga",
+      "destination": "https://kss.simkss.my.id/harga"
     }
   ]
 }
