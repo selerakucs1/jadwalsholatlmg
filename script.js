@@ -231,19 +231,22 @@ function updateActivePrayer(waktuSholat) {
 }
 
 // =============================== // LOAD TANGGAL (CE & HIJRI) // =============================== 
-function loadTanggal() { 
-  fetch("https://api.myquran.com/v3/cal/today?adj=0&tz=Asia%2FJakarta") 
-    .then(r => r.json()) 
-    .then(res => { 
-      if (!res?.data) return; 
-      const dhijr = res.data.hijr.day; 
-      const mhijr = res.data.hijr.monthName; 
-      const yhijr = res.data.hijr.year; 
-      const ce = res.data.ce.today; 
-      ceDateEl.textContent = ce; 
-      hijrDateEl.textContent = ${dhijr} ${mhijr} ${yhijr} H; }) 
-    .catch(
-      err => console.error("Error load tanggal:", err)); 
+function loadTanggal() {
+  fetch("https://api.myquran.com/v3/cal/today?adj=0&tz=Asia%2FJakarta")
+    .then(r => r.json())
+    .then(res => {
+      if (!res?.data?.hijr || !res?.data?.ce) return;
+
+      const { day, monthName, year } = res.data.hijr;
+      const ce = res.data.ce.today;
+
+      ceDateEl.textContent = ce ?? "-";
+      hijrDateEl.textContent = `${day} ${monthName} ${year} H`;
+    })
+    .catch(err => {
+      console.error("Error load tanggal:", err);
+      hijrDateEl.textContent = "Tanggal tidak tersedia";
+    });
 }
 
 // ================= INIT =================
