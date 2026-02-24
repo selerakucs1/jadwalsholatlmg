@@ -34,6 +34,33 @@ h2 {
   margin-bottom: 20px;
 }
 
+.watermark {
+  position: fixed;
+  bottom: 12px;
+  right: 16px;
+  font-size: 11px;
+  color: rgba(148, 163, 184, 0.45);   
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+  pointer-events: none;                
+  z-index: 999;                       
+  user-select: none;                 
+  letter-spacing: 0.5px;
+}
+
+.watermark:hover {
+  color: rgba(148, 163, 184, 0.8);
+  transition: color 0.3s ease;
+}
+
+@media (max-width: 576px) {
+  .watermark {
+    font-size: 9px;
+    bottom: 8px;
+    right: 12px;
+  }
+}
+
 /* ===============================
    INPUT & BUTTON
 =================================*/
