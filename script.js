@@ -257,6 +257,16 @@ function loadTanggal() {
 }
 
 // ===============================
+// REGISTER SERVICE WORKER (PWA)
+// ===============================
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js")
+      .then(reg => console.log("Service Worker registered"))
+      .catch(err => console.log("SW failed", err));
+  });
+}
+// ===============================
 // INIT
 // ===============================
 loadKota();
