@@ -2,8 +2,12 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/harga",
-      "destination": "https://kss.simkss.my.id/harga"
+      "source": "/sholat",
+      "destination": "https://kss.simkss.my.id/sholat"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "https://kss.simkss.my.id/api/$1"
     }
   ]
 }
