@@ -215,25 +215,21 @@ async function loadRandomAyat() {
     const res = await fetch("https://api.myquran.com/v2/quran/ayat/acak");
     const d = await res.json();
 
-    console.log("RESP AYAT:", d); // biar bisa lihat struktur di console
+    console.log("RESP AYAT:", d);
 
     if (!d?.data?.ayat) return;
 
-    const ayat = d.data.ayat.ar || "";
-    const arti = d.data.ayat.idn || "";
-    const nomor = d.data.ayat.nomor || "";
-
-    // ambil nama surat dengan aman
-    const surat =
-      d.data.surat?.nama?.id ||
-      d.data.surat?.nama ||
-      "Tidak diketahui";
+    const ayatArab = d.data.ayat.arab || "";
+    const arti = d.data.ayat.text || "";
+    const nomor = d.data.ayat.ayah || "";
+    const surat = d.data.info?.surat?.nama?.id || "Tidak diketahui";
 
     const ele = document.getElementById("runningAyat");
 
-    ele.textContent = `${ayat} — ${arti} (QS. ${surat}: ${nomor})`;
+    ele.textContent =
+      `${ayatArab} — ${arti} (QS. ${surat}: ${nomor})`;
 
-    // reset animasi
+    // reset animasi supaya scroll ulang
     ele.style.animation = "none";
     void ele.offsetWidth;
     ele.style.animation = "scrollText 25s linear infinite";
