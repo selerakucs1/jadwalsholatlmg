@@ -229,9 +229,12 @@ async function loadRandomAyat() {
     ele.textContent =
       `${ayatArab} — ${arti} (QS. ${surat}: ${nomor})`;
 
+    const panjang = ele.textContent.length;
+    const durasi = Math.max(20, panjang * 0.3); 
+
     ele.style.animation = "none";
     void ele.offsetWidth;
-    ele.style.animation = "scrollText 25s linear infinite";
+    ele.style.animation = `scrollText ${durasi}s linear infinite`;
 
   } catch (e) {
     console.error("Gagal ambil ayat:", e);
