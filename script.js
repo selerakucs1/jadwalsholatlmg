@@ -249,5 +249,5 @@ function loadTanggal() {
 // ================= INIT =================
 loadKota();
 loadTanggal();
-//loadRandomAyat();
-//setInterval(loadRandomAyat, 60000);
+loadRandomAyat();
+setInterval(loadRandomAyat, 60000);
