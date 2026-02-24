@@ -1,9 +1,8 @@
 {
-  "version": 2,
   "rewrites": [
     {
       "source": "/sholat",
-      "destination": "https://kss.simkss.my.id"
+      "destination": "https://kss.simkss.my.id/sholat"
     }
   ]
 }
