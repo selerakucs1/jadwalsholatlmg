@@ -94,58 +94,44 @@ function startCountdown() {
 
     const now = new Date();
 
-    const todayStr =
-      now.getFullYear() + "-" +
-      String(now.getMonth() + 1).padStart(2, "0") + "-" +
-      String(now.getDate()).padStart(2, "0");
+    const makeDate = (jam, addDay = 0) => {
+      const d = new Date();
+      d.setDate(d.getDate() + addDay);
+      const [h, m] = jam.split(":");
+      d.setHours(h, m, 0, 0);
+      return d;
+    };
 
-    const tomorrow = new Date(now);
-    tomorrow.setDate(now.getDate() + 1);
-
-    const tomorrowStr =
-      tomorrow.getFullYear() + "-" +
-      String(tomorrow.getMonth() + 1).padStart(2, "0") + "-" +
-      String(tomorrow.getDate()).padStart(2, "0");
-
+    // ===== URUTAN WAKTU SHOLAT SEBENARNYA =====
     const waktu = [
-      { nama: "Imsak", jam: currentJadwal.imsak },
-      { nama: "Subuh", jam: currentJadwal.subuh },
-      { nama: "Terbit", jam: currentJadwal.terbit },
-      { nama: "Dhuha", jam: currentJadwal.dhuha },
-      { nama: "Dzuhur", jam: currentJadwal.dzuhur },
-      { nama: "Ashar", jam: currentJadwal.ashar },
-      { nama: "Maghrib", jam: currentJadwal.maghrib },
-      { nama: "Isya", jam: currentJadwal.isya }
+      { nama: "Imsak", target: makeDate(currentJadwal.imsak) },
+      { nama: "Subuh", target: makeDate(currentJadwal.subuh) },
+      { nama: "Terbit", target: makeDate(currentJadwal.terbit) },
+      { nama: "Dhuha", target: makeDate(currentJadwal.dhuha) },
+      { nama: "Dzuhur", target: makeDate(currentJadwal.dzuhur) },
+      { nama: "Ashar", target: makeDate(currentJadwal.ashar) },
+      { nama: "Maghrib", target: makeDate(currentJadwal.maghrib) },
+      { nama: "Isya", target: makeDate(currentJadwal.isya) }
     ];
 
-    let jadwalDenganTanggal = [];
-
-    waktu.forEach((w, i) => {
-      let target = new Date(`${todayStr}T${w.jam}:00`);
-
-      // Jika sudah lewat semua waktu dan ini Subuh, jadikan besok
-      if (w.nama === "Subuh" && now > target) {
-        target = new Date(`${tomorrowStr}T${w.jam}:00`);
-      }
-
-      jadwalDenganTanggal.push({
-        ...w,
-        target
-      });
-    });
-
-    // Urutkan berdasarkan waktu target
-    jadwalDenganTanggal.sort((a, b) => a.target - b.target);
-
-    // ================= CARI NEXT =================
-    let next = jadwalDenganTanggal.find(j => j.target > now);
-
-    if (!next) {
-      // fallback aman (tidak minus)
-      next = jadwalDenganTanggal[0];
+    // ===== FIX LINTAS HARI =====
+    // Kalau sekarang lewat Isya → tambahkan 1 hari untuk Imsak & Subuh
+    if (now > waktu[waktu.length - 1].target) {
+      waktu[0].target = makeDate(currentJadwal.imsak, 1);
+      waktu[1].target = makeDate(currentJadwal.subuh, 1);
     }
 
-    // ================= COUNTDOWN =================
+    // ===== CARI NEXT =====
+    let next = waktu.find(w => w.target > now);
+
+    if (!next) {
+      next = {
+        nama: "Imsak",
+        target: makeDate(currentJadwal.imsak, 1)
+      };
+    }
+
+    // ===== COUNTDOWN =====
     let diff = next.target - now;
     if (diff < 0) diff = 0;
 
@@ -160,31 +146,36 @@ function startCountdown() {
 
     nextNameEl.textContent = `Menuju ${next.nama}`;
 
-    // ================= HIGHLIGHT =================
-    updateActiveByTime(now, jadwalDenganTanggal);
+    updateActivePrayer(now, waktu);
 
   }, 1000);
 }
 
-function updateActiveByTime(now, jadwal) {
+function updateActivePrayer(now, waktu) {
   const items = document.querySelectorAll(".schedule-item");
-  items.forEach(item => item.classList.remove("active"));
+  items.forEach(i => i.classList.remove("active"));
 
-  for (let i = 0; i < jadwal.length; i++) {
+  const tampil = ["Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"];
 
-    const current = jadwal[i];
-    const next = jadwal[i + 1];
+  for (let i = 0; i < waktu.length; i++) {
+    const current = waktu[i];
+    const next = waktu[i + 1];
 
     if (next) {
       if (now >= current.target && now < next.target) {
-        if (items[i]) items[i].classList.add("active");
+        const index = tampil.indexOf(current.nama);
+        if (index !== -1 && items[index]) {
+          items[index].classList.add("active");
+        }
         return;
       }
     } else {
-      // Ini adalah Isya terakhir
+      // Isya sampai Imsak besok tetap aktif
       if (now >= current.target) {
-        if (items[i]) items[i].classList.add("active");
-        return;
+        const index = tampil.indexOf(current.nama);
+        if (index !== -1 && items[index]) {
+          items[index].classList.add("active");
+        }
       }
     }
   }
