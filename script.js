@@ -171,7 +171,7 @@ async function loadRandomAyat() {
     const surat = d.data.info.surat.nama.id;
 
     // Tambah spasi di awal & akhir biar loop mulus
-    const teks = `${arti} — (QS. ${surat}:${nomor})`;
+    const teks = `  ${arti} — (QS. ${surat}:${nomor})  `;
     const panjang = teks.length;
     const durasi = Math.max(14, Math.min(38, panjang * 0.20));  
     runningAyatEl.textContent = teks;
