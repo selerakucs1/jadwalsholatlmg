@@ -60,13 +60,23 @@ async function loadKota() {
 kotaFilter.addEventListener("input", function () {
   const keyword = this.value.toLowerCase();
   const options = kotaSelect.options;
+  let visibleCount = 0;
 
   for (let i = 0; i < options.length; i++) {
     const text = options[i].text.toLowerCase();
-    options[i].style.display = text.includes(keyword) ? "" : "none";
+    const match = text.includes(keyword);
+    options[i].style.display = match ? "" : "none";
+    if (match) visibleCount++;
+  }
+
+  // Buka dropdown seperti list
+  if (visibleCount > 0) {
+    kotaSelect.size = Math.min(8, visibleCount); // max 8 item tampil
+    kotaSelect.style.display = "block";
+  } else {
+    kotaSelect.size = 0;
   }
 });
-
 
 // ===============================
 // LOAD JADWAL SHOLAT
@@ -250,27 +260,6 @@ kotaSelect.addEventListener("change", function () {
   this.size = 0;
   kotaFilter.value = this.options[this.selectedIndex].text;
   loadJadwal(this.value);
-});
-
-kotaFilter.addEventListener("input", function () {
-  const keyword = this.value.toLowerCase();
-  const options = kotaSelect.options;
-  let visibleCount = 0;
-
-  for (let i = 0; i < options.length; i++) {
-    const text = options[i].text.toLowerCase();
-    const match = text.includes(keyword);
-    options[i].style.display = match ? "" : "none";
-    if (match) visibleCount++;
-  }
-
-  // Buka dropdown seperti list
-  if (visibleCount > 0) {
-    kotaSelect.size = Math.min(8, visibleCount); // max 8 item tampil
-    kotaSelect.style.display = "block";
-  } else {
-    kotaSelect.size = 0;
-  }
 });
 
 // ===============================
