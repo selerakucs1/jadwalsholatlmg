@@ -219,7 +219,7 @@ async function loadRandomAyat() {
 
     if (!d?.data?.ayat) return;
 
-    const ayatArab = d.data.ayat.arab || "";
+    //const ayatArab = d.data.ayat.arab || "";
     const arti = d.data.ayat.text || "";
     const nomor = d.data.ayat.ayah || "";
     const surat = d.data?.info?.surat?.nama?.id ?? "Tidak diketahui";
@@ -227,7 +227,7 @@ async function loadRandomAyat() {
     const ele = document.getElementById("runningAyat");
 
     ele.textContent =
-      `${ayatArab} — ${arti} (QS. ${surat}: ${nomor})`;
+      `${arti} (QS. ${surat}: ${nomor})`;
 
     const panjang = ele.textContent.length;
     const durasi = Math.max(20, panjang * 0.3); 
