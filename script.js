@@ -214,17 +214,24 @@ async function loadRandomAyat() {
   try {
     const res = await fetch("https://api.myquran.com/v2/quran/ayat/acak");
     const d = await res.json();
-    if(!d?.ayat?.arab || !d?.ayat?.text) return;
-    
-    const ele = document.getElementById("runningAyat");
-    ele.textContent = `${d.ayat.text} ( QS. ${d.info.surat.nama.id}: ${d.ayat.ayah} )`;
 
-    // reset animasi agar scroll mulai dari awal
+    if (!d?.data?.ayat) return;
+
+    const ayat = d.data.ayat.ar;
+    const arti = d.data.ayat.idn;
+    const surat = d.data.surat.nama;
+    const nomor = d.data.ayat.nomor;
+
+    const ele = document.getElementById("runningAyat");
+
+    ele.textContent = `${ayat} — ${arti} (QS. ${surat}: ${nomor})`;
+
+    // reset animasi
     ele.style.animation = "none";
-    void ele.offsetWidth; // reflow
+    void ele.offsetWidth;
     ele.style.animation = "scrollText 25s linear infinite";
 
-  } catch(e){
+  } catch (e) {
     console.error("Gagal ambil ayat:", e);
   }
 }
