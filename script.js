@@ -13,12 +13,9 @@ let countdownInterval = null;
 const icons = {
   Subuh: "bi-moon",
   Dzuhur: "bi-sun",
-  Jumat: "bi-journal-bookmark",
   Ashar: "bi-sunset",
   Maghrib: "bi-cloud-sun",
-  Isya: "bi-moon-stars",
-  Terbit: "bi-sunrise",
-  Dhuha: "bi-brightness-high"
+  Isya: "bi-moon-stars"
 };
 
 // ================= LOAD KOTA =================
@@ -62,12 +59,14 @@ async function loadJadwal(id) {
 
 // ================= RENDER =================
 function renderJadwal() {
+  if (!currentJadwal) return;
+
   const now = new Date();
   const isFriday = now.getDay() === 5;
 
   const list = [
     { nama: "Subuh", jam: currentJadwal.subuh },
-    { nama: isFriday ? "Jumat" : "Dzuhur", jam: currentJadwal.dzuhur },
+    { nama: isFriday ? "Dzuhur" : "Dzuhur", jam: currentJadwal.dzuhur },
     { nama: "Ashar", jam: currentJadwal.ashar },
     { nama: "Maghrib", jam: currentJadwal.maghrib },
     { nama: "Isya", jam: currentJadwal.isya }
@@ -86,11 +85,13 @@ function renderJadwal() {
   });
 }
 
-// ================= COUNTDOWN =================
+// ================= COUNTDOWN + HIGHLIGHT =================
 function startCountdown() {
   if (countdownInterval) clearInterval(countdownInterval);
 
   countdownInterval = setInterval(() => {
+    if (!currentJadwal) return;
+
     const now = new Date();
     const todayStr =
       now.getFullYear() + "-" +
@@ -99,8 +100,6 @@ function startCountdown() {
 
     const waktu = [
       { nama: "Subuh", jam: currentJadwal.subuh },
-      { nama: "Terbit", jam: currentJadwal.terbit },
-      { nama: "Dhuha", jam: currentJadwal.dhuha },
       { nama: "Dzuhur", jam: currentJadwal.dzuhur },
       { nama: "Ashar", jam: currentJadwal.ashar },
       { nama: "Maghrib", jam: currentJadwal.maghrib },
@@ -108,16 +107,31 @@ function startCountdown() {
     ];
 
     let next = null;
+    let activeIndex = 0;
 
-    for (let w of waktu) {
-      const target = new Date(`${todayStr}T${w.jam}:00`);
-      if (target > now) {
-        next = { ...w, target };
-        break;
+    for (let i = 0; i < waktu.length; i++) {
+      const target = new Date(`${todayStr}T${waktu[i].jam}:00`);
+
+      if (target > now && !next) {
+        next = { ...waktu[i], target };
+      }
+
+      const nextTime =
+        i < waktu.length - 1
+          ? new Date(`${todayStr}T${waktu[i + 1].jam}:00`)
+          : null;
+
+      if (now >= target && (!nextTime || now < nextTime)) {
+        activeIndex = i;
       }
     }
 
-    if (!next) return;
+    if (!next) {
+      next = {
+        ...waktu[0],
+        target: new Date(`${todayStr}T${waktu[0].jam}:00`)
+      };
+    }
 
     const diff = next.target - now;
     const h = Math.floor(diff / 3600000);
@@ -130,41 +144,19 @@ function startCountdown() {
       `${String(s).padStart(2, "0")}`;
 
     nextNameEl.textContent = `Menuju ${next.nama}`;
+
+    updateActivePrayer(activeIndex);
   }, 1000);
-  updateActivePrayer(waktu);
 }
 
-// ================= GPS =================
-function detectLocation() {
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+// ================= UPDATE ACTIVE =================
+function updateActivePrayer(index) {
+  const items = document.querySelectorAll(".schedule-item");
 
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-    );
-    const data = await res.json();
+  items.forEach(item => item.classList.remove("active"));
 
-    const city =
-      data.address.city ||
-      data.address.county ||
-      data.address.state;
-
-    matchCity(city);
-  });
-}
-
-async function matchCity(city) {
-  const res = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
-  const data = await res.json();
-
-  const found = data.data.find(k =>
-    k.lokasi.toLowerCase().includes(city.toLowerCase())
-  );
-
-  if (found) {
-    kotaInput.value = found.lokasi;
-    loadJadwal(found.id);
+  if (items[index]) {
+    items[index].classList.add("active");
   }
 }
 
@@ -188,49 +180,7 @@ async function loadRandomAyat() {
   runningAyatEl.style.animation = `scrollText ${durasi}s linear infinite`;
 }
 
-// ================= EVENT =================
-kotaInput.addEventListener("change", function () {
-  const value = this.value;
-  const options = kotaList.options;
-
-  for (let i = 0; i < options.length; i++) {
-    if (options[i].value === value) {
-      loadJadwal(options[i].dataset.id);
-      break;
-    }
-  }
-});
-
-function updateActivePrayer(waktuSholat) {
-  const items = document.querySelectorAll(".schedule-item");
-  const now = new Date();
-
-  const todayStr =
-    now.getFullYear() + "-" +
-    String(now.getMonth() + 1).padStart(2, "0") + "-" +
-    String(now.getDate()).padStart(2, "0");
-
-  items.forEach(item => item.classList.remove("active"));
-  document.querySelector(".countdown-box")?.classList.remove("active-time");
-
-  for (let i = 0; i < waktuSholat.length; i++) {
-    const start = new Date(`${todayStr}T${waktuSholat[i].jam}:00`);
-
-    const next =
-      i < waktuSholat.length - 1
-        ? new Date(`${todayStr}T${waktuSholat[i + 1].jam}:00`)
-        : null;
-
-    if (now >= start && (!next || now < next)) {
-      items[i].classList.add("active");
-      document.querySelector(".countdown-box")
-        .classList.add("active-time");
-      break;
-    }
-  }
-}
-
-// =============================== // LOAD TANGGAL (CE & HIJRI) // =============================== 
+// ================= LOAD TANGGAL =================
 function loadTanggal() {
   fetch("https://api.myquran.com/v3/cal/today?adj=0&tz=Asia%2FJakarta")
     .then(r => r.json())
@@ -245,9 +195,21 @@ function loadTanggal() {
     })
     .catch(err => {
       console.error("Error load tanggal:", err);
-      hijrDateEl.textContent = "Tanggal tidak tersedia";
     });
 }
+
+// ================= EVENT =================
+kotaInput.addEventListener("change", function () {
+  const value = this.value;
+  const options = kotaList.options;
+
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].value === value) {
+      loadJadwal(options[i].dataset.id);
+      break;
+    }
+  }
+});
 
 // ================= INIT =================
 loadKota();
