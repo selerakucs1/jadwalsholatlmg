@@ -279,3 +279,4 @@ if ("serviceWorker" in navigator) {
 loadKota();
 loadTanggal();
 loadRandomAyat();
+setInterval(loadRandomAyat, 60000);
