@@ -108,30 +108,40 @@ button:hover {
   align-items: center;
   padding: 12px;
   margin-bottom: 6px;
-  background: var(--bg-card);
+  background: #1e293b;
   border-radius: 8px;
-  border: 1px solid var(--bg-hover);
-  transition: 0.2s;
+  border: 1px solid #334155;
 }
 
-.schedule-item:hover {
-  background: var(--bg-hover);
+/* Paksa warna teks kiri (nama sholat) */
+.schedule-item span:first-child {
+  color: #f8fafc !important;
+  font-weight: 500;
 }
 
-.schedule-item i {
-  margin-right: 6px;
-  color: var(--primary);
-}
-
-/* ACTIVE WAKTU */
-.schedule-item.active {
-  background: var(--primary);
-  color: black;
+/* Paksa warna jam kanan */
+.schedule-item span:last-child {
+  color: #22c55e !important;
   font-weight: bold;
 }
 
+/* Icon warna jelas */
+.schedule-item i {
+  color: #22c55e !important;
+  margin-right: 6px;
+}
+
+/* ACTIVE */
+.schedule-item.active {
+  background: #22c55e;
+}
+
+.schedule-item.active span {
+  color: black !important;
+}
+
 .schedule-item.active i {
-  color: black;
+  color: black !important;
 }
 
 /* ===============================
