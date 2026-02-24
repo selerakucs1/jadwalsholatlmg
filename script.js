@@ -215,12 +215,19 @@ async function loadRandomAyat() {
     const res = await fetch("https://api.myquran.com/v2/quran/ayat/acak");
     const d = await res.json();
 
+    console.log("RESP AYAT:", d); // biar bisa lihat struktur di console
+
     if (!d?.data?.ayat) return;
 
-    const ayat = d.data.ayat.ar;
-    const arti = d.data.ayat.idn;
-    const surat = d.data.surat.nama;
-    const nomor = d.data.ayat.nomor;
+    const ayat = d.data.ayat.ar || "";
+    const arti = d.data.ayat.idn || "";
+    const nomor = d.data.ayat.nomor || "";
+
+    // ambil nama surat dengan aman
+    const surat =
+      d.data.surat?.nama?.id ||
+      d.data.surat?.nama ||
+      "Tidak diketahui";
 
     const ele = document.getElementById("runningAyat");
 
