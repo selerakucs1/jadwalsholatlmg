@@ -67,6 +67,29 @@ button:hover {
   opacity: 0.9;
 }
 
+.btn-lokasi {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  background: linear-gradient(135deg, #00c853, #00e676);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 200, 83, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-lokasi:hover {
+  transform: scale(1.08);
+}
+
+.btn-lokasi:active {
+  transform: scale(0.95);
+}
 /* ===============================
    TANGGAL
 =================================*/
