@@ -1,7 +1,8 @@
 // ===============================
 // ELEMENT
 // ===============================
-const kotaSelect = document.getElementById("kotaSelect");
+const kotaInput = document.getElementById("kotaInput");
+const kotaList = document.getElementById("kotaList");
 const kotaFilter = document.getElementById("kotaFilter");
 const jadwalList = document.getElementById("jadwalList");
 const countdownEl = document.getElementById("countdown");
@@ -35,24 +36,23 @@ async function loadKota() {
     const res = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
     const data = await res.json();
 
-    kotaSelect.innerHTML = "";
+    kotaList.innerHTML = "";
 
     data.data.forEach(kota => {
       const option = document.createElement("option");
-      option.value = kota.id;
-      option.textContent = kota.lokasi;
-      kotaSelect.appendChild(option);
+      option.value = kota.lokasi;
+      option.dataset.id = kota.id;
+      kotaList.appendChild(option);
     });
 
-    // Default Kab Lamongan (1610)
-    kotaSelect.value = "1610";
+    // Default Lamongan
+    kotaInput.value = "Kab. Lamongan";
     loadJadwal("1610");
 
   } catch (err) {
     console.error("Gagal load kota:", err);
   }
 }
-
 
 // ===============================
 // FILTER KOTA
@@ -256,10 +256,16 @@ async function loadRandomAyat() {
 // ===============================
 // EVENT LISTENER
 // ===============================
-kotaSelect.addEventListener("change", function () {
-  this.size = 0;
-  kotaFilter.value = this.options[this.selectedIndex].text;
-  loadJadwal(this.value);
+kotaInput.addEventListener("change", function () {
+  const value = this.value;
+  const options = kotaList.options;
+
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].value === value) {
+      loadJadwal(options[i].dataset.id);
+      break;
+    }
+  }
 });
 
 // ===============================
