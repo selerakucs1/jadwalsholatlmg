@@ -162,22 +162,33 @@ function updateActivePrayer(index) {
 
 // ================= AYAT =================
 async function loadRandomAyat() {
-  const res = await fetch("https://api.myquran.com/v2/quran/ayat/acak");
-  const d = await res.json();
+  try {
+    const res = await fetch("https://api.myquran.com/v2/quran/ayat/acak");
+    const d = await res.json();
 
-  const arti = d.data.ayat.text;
-  const nomor = d.data.ayat.ayah;
-  const surat = d.data.info.surat.nama.id;
+    const arti = d.data.ayat.text.trim();
+    const nomor = d.data.ayat.ayah;
+    const surat = d.data.info.surat.nama.id;
 
-  runningAyatEl.textContent =
-    `${arti} (QS. ${surat}: ${nomor})`;
+    // Tambah spasi di awal & akhir biar loop mulus
+    const teks = `     ${arti} — (QS. ${surat}:${nomor})     `;
 
-  const panjang = runningAyatEl.textContent.length;
-  const durasi = Math.max(25, panjang * 0.4);
+    runningAyatEl.textContent = teks;
 
-  runningAyatEl.style.animation = "none";
-  void runningAyatEl.offsetWidth;
-  runningAyatEl.style.animation = `scrollText ${durasi}s linear infinite`;
+    // Hitung durasi berdasarkan panjang teks (skala realistis)
+    const panjang = teks.length;
+    let durasi = Math.max(20, Math.min(60, panjang * 0.35)); // 0.35 detik per karakter
+
+    // Reset animasi dengan benar
+    runningAyatEl.style.animation = "none";
+    runningAyatEl.offsetHeight; // force reflow
+
+    runningAyatEl.style.animation = `scrollText ${durasi}s linear infinite`;
+
+  } catch (err) {
+    console.error("Gagal load ayat:", err);
+    runningAyatEl.textContent = "Gagal memuat ayat...";
+  }
 }
 
 // ================= LOAD TANGGAL =================
