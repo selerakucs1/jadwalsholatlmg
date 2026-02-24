@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Informasi</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+
+</head>
+
+<body class="bg-dark text-light">
+
+<div class="container py-3">
+
+  <h4 class="text-center mb-3 fw-bold text-warning">
+    Jadwal Sholat
+  </h4>
+
+  <div class="text-center mb-3 small text-secondary">
+    <span id="ceDate"></span> / <span id="hijrDate"></span>
+  </div>
+
+  <!-- FILTER KOTA -->
+  <div class="mb-3">
+    <label class="form-label">Pilih Kota</label>
+    <input type="text" id="kotaFilter" class="form-control mb-2" placeholder="Cari kota..." />
+    <select id="kotaSelect" class="form-select"></select>
+  </div>
+
+  <!-- CARD JADWAL -->
+  <div class="card schedule-card mb-3">
+    <div id="jadwalList"></div>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="card countdown-card text-center mb-3">
+    <h6 id="nextName" class="mb-2"></h6>
+    <div id="countdown" class="display-5 fw-bold"></div>
+
+    <p class="text-source mt-2 mb-0">
+      sumber :
+      <a href="https://bimasislam.kemenag.go.id/jadwalshalat" target="_blank">
+        bimasislam.kemenag.go.id
+      </a>
+      |
+      <a href="https://api.myquran.com" target="_blank">
+        api.myquran.com
+      </a>
+    </p>
+  </div>
+
+  <!-- RUNNING AYAT -->
+  <div class="card running-card p-2">
+    <div id="runningAyat"></div>
+  </div>
+
+</div>
+
+<script src="/script.js"></script>
+</body>
+</html>
