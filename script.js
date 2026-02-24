@@ -212,7 +212,7 @@ function highlightActive(waktuSholat) {
 // ===============================
 async function loadRandomAyat() {
   try {
-    const res = await fetch("/api/quran");
+    const res = await fetch("https://api.myquran.com/v2/quran/ayat/acak");
     const d = await res.json();
     if(!d?.ayat?.arab || !d?.ayat?.text) return;
     
