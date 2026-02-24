@@ -147,6 +147,8 @@ function startCountdown() {
 
     const waktuSholat = [
       { nama: "Subuh", jam: currentJadwal.subuh },
+      { nama: "Terbit", jam: currentJadwal.terbit},
+      { nama: "Dhuha", jam: currentJadwal.dhuha},
       { nama: "Dzuhur", jam: currentJadwal.dzuhur },
       { nama: "Ashar", jam: currentJadwal.ashar },
       { nama: "Maghrib", jam: currentJadwal.maghrib },
