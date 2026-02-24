@@ -222,14 +222,13 @@ async function loadRandomAyat() {
     const ayatArab = d.data.ayat.arab || "";
     const arti = d.data.ayat.text || "";
     const nomor = d.data.ayat.ayah || "";
-    const surat = d.data.info?.surat?.nama?.id || "Tidak diketahui";
+    const surat = d.data?.info?.surat?.nama?.id ?? "Tidak diketahui";
 
     const ele = document.getElementById("runningAyat");
 
     ele.textContent =
       `${ayatArab} — ${arti} (QS. ${surat}: ${nomor})`;
 
-    // reset animasi supaya scroll ulang
     ele.style.animation = "none";
     void ele.offsetWidth;
     ele.style.animation = "scrollText 25s linear infinite";
