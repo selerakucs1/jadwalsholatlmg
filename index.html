@@ -26,13 +26,13 @@
     <span id="ceDate"></span> / <span id="hijrDate"></span>
   </div>
 
-  <!-- FILTER KOTA -->
-  <div class="mb-3">
-    <label class="form-label">Pilih Kota</label>
-    <input type="text" id="kotaInput" class="form-control mb-2" placeholder="Cari kota..." list="kotaList">
-    <datalist id="kotaList"></datalist>
-  </div>
-
+  <!-- PILIH KOTA -->
+    <div class="form-group">
+      <input type="text" id="kotaInput" placeholder="Cari kota..." list="kotaList">
+      <datalist id="kotaList"></datalist>
+      <button onclick="detectLocation()">Gunakan Lokasi Saya</button>
+    </div>
+  
   <!-- CARD JADWAL -->
   <div class="card schedule-card mb-3">
     <div id="jadwalList"></div>
