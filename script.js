@@ -131,6 +131,7 @@ function startCountdown() {
 
     nextNameEl.textContent = `Menuju ${next.nama}`;
   }, 1000);
+  updateActivePrayer(waktu);
 }
 
 // ================= GPS =================
@@ -199,6 +200,35 @@ kotaInput.addEventListener("change", function () {
     }
   }
 });
+
+function updateActivePrayer(waktuSholat) {
+  const items = document.querySelectorAll(".schedule-item");
+  const now = new Date();
+
+  const todayStr =
+    now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0");
+
+  items.forEach(item => item.classList.remove("active"));
+  document.querySelector(".countdown-box")?.classList.remove("active-time");
+
+  for (let i = 0; i < waktuSholat.length; i++) {
+    const start = new Date(`${todayStr}T${waktuSholat[i].jam}:00`);
+
+    const next =
+      i < waktuSholat.length - 1
+        ? new Date(`${todayStr}T${waktuSholat[i + 1].jam}:00`)
+        : null;
+
+    if (now >= start && (!next || now < next)) {
+      items[i].classList.add("active");
+      document.querySelector(".countdown-box")
+        .classList.add("active-time");
+      break;
+    }
+  }
+}
 
 // ================= INIT =================
 loadKota();
