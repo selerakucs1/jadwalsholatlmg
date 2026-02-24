@@ -1,134 +1,94 @@
 body {
-  background: #111;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+  margin: 0;
+  padding: 20px;
 }
 
-/* =========================
-   CARD STYLE
-========================= */
-.card {
-  background: #1c1c1c;
-  border: 1px solid #2c2c2c;
-  border-radius: 14px;
-  padding: 1rem;
+.container {
+  max-width: 500px;
+  margin: auto;
 }
 
-/* =========================
-   JADWAL LIST 
-========================= */
-.schedule-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid #2a2a2a;
-  font-size: 0.95rem;
-  color: #ffffff;             
+h2 {
+  text-align: center;
 }
 
-.schedule-item span {
-  color: #ffffff;              
+.form-group {
+  margin-bottom: 15px;
 }
 
-.schedule-item:last-child {
-  border-bottom: none;
-}
-
-/* Highlight waktu terdekat */
-.schedule-item.active {
-  background: #2c2c2c;
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 5px;
   border-radius: 8px;
-  font-weight: bold;
-  color: #ffc107;              
+  border: none;
 }
 
-.schedule-item.active span {
-  color: #ffc107;              
+button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
 }
 
-.schedule-item i {
-  font-size: 1rem;
-  vertical-align: middle;
+button:hover {
+  opacity: 0.9;
 }
 
-/* =========================
-   COUNTDOWN
-========================= */
-#nextName {
-  color: #ffc107;
-  font-weight: 600;
+.tanggal {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.countdown-box {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 15px;
 }
 
 #countdown {
-  color: #ffffff;
-  letter-spacing: 1px;
+  font-size: 28px;
+  font-weight: bold;
 }
 
-/* =========================
-   SOURCE TEXT
-========================= */
-.text-source {
-  font-size: 0.75rem;
-  color: #888;
-}
-
-.text-source a {
-  color: #38bdf8;
-  text-decoration: none;
-}
-
-/* =========================
-   RUNNING AYAT
-========================= */
-
-.running-card {
-  background: #1c1c1c;
-  border: 1px solid #2c2c2c;
-  overflow: hidden;
-  min-height: 2.8rem;
+.schedule-item {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 5px;
+  background: #1e293b;
+  border-radius: 8px;
+}
+
+.schedule-item.active {
+  background: #22c55e;
+  color: black;
+}
+
+.ayat-box {
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 20px;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 #runningAyat {
-  white-space: nowrap;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #ffffff;             
-  padding-left: 100%;         
-  animation: scrollText 25s linear infinite;
-  text-shadow: 0 0 6px rgba(255,255,255,0.2); 
+  display: inline-block;
+  padding-left: 100%;
+  animation: scrollText 30s linear infinite;
 }
-
-
-#runningAyat .arab {
-  color: #38bdf8;              
-  font-weight: 600;
-}
-
 
 @keyframes scrollText {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-/* =========================
-   INPUT STYLE
-========================= */
-#kotaFilter,
-#kotaSelect {
-  background: #1f1f1f;
-  border: 1px solid #333;
-  color: #fff;
-}
-
-#kotaFilter::placeholder {
-  color: #888;
-}
-
-/* =========================
-   MOBILE OPTIMIZATION
-========================= */
-@media (max-width: 480px) {
-  #countdown { font-size: 1.8rem; }
-  .schedule-item { font-size: 0.85rem; }
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
 }
