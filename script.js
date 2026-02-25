@@ -50,9 +50,6 @@ async function loadJadwal(id) {
 
   currentJadwal = data.data.jadwal;
 
-  //ceDateEl.textContent = currentJadwal.tanggal;
-  //hijrDateEl.textContent = currentJadwal.hijriah;
-
   renderJadwal();
   startCountdown();
 }
@@ -218,9 +215,8 @@ async function loadTanggal() {
       return;
     }
 
-    // Gunakan field 'today' langsung supaya sesuai API
     ceDateEl.textContent = data.data.ce.today ?? "-";
-    hijrDateEl.textContent = data.data.hijr.today ?? "-";
+    hijrDateEl.textContent = `${data.data.hijr.day} ${data.data.hijr.monthName} ${data.data.hijr.year} H` ?? "-";
 
   } catch (err) {
     console.error("Error load tanggal:", err);
