@@ -239,7 +239,7 @@ kotaInput.addEventListener("change", function () {
 
 // ================= GPS =================
 async function detectLocation() {
-  if (!navigator.geolocation) return alert("Geolokasi tidak didukung browser");
+  if (!navigator.geolocation) return showToast("Geolokasi tidak didukung browser", "error");
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
     const lat = pos.coords.latitude;
@@ -248,54 +248,57 @@ async function detectLocation() {
     try {
       const resGeo = await fetch(
         `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
-        {
-          headers: {
-            "User-Agent": "AplikasiSholat/1.0",
-            "Accept-Language": "id"
-          }
-        }
-        );
+        { headers: { "User-Agent": "AplikasiSholat/1.0", "Accept-Language": "id" } }
+      );
       const geoData = await resGeo.json();
+
       const cityName =
         geoData.address.city ||
         geoData.address.town ||
         geoData.address.county ||
         geoData.address.village;
 
-      if (!cityName) return alert("Gagal mendeteksi kota");
+      if (!cityName) return showToast("Gagal mendeteksi kota", "error");
 
       const resKota = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
       const kotaListData = await resKota.json();
 
-      let match = kotaListData.data.find(
-        k => k.lokasi.toLowerCase().includes(cityName.toLowerCase())
-      );
+      let match = kotaListData.data.find(k => k.lokasi.toLowerCase().includes(cityName.toLowerCase()));
 
       if (!match) {
-        match = kotaListData.data.find(k =>
-          cityName.toLowerCase().includes(k.lokasi.toLowerCase())
-        );
+        match = kotaListData.data.find(k => cityName.toLowerCase().includes(k.lokasi.toLowerCase()));
       }
 
       if (match) {
         kotaInput.value = match.lokasi;
         loadJadwal(match.id);
-        alert(`Lokasi terdeteksi: ${match.lokasi}`);
+        showToast(`Lokasi terdeteksi: ${match.lokasi}`, "success");
       } else {
-        alert("Kota tidak ditemukan di database MyQuran");
+        showToast("Kota tidak ditemukan di database MyQuran", "info");
       }
 
     } catch (err) {
       console.error(err);
-      alert("Gagal memproses lokasi GPS, menggunakan kota default");
+      showToast("Gagal memproses lokasi GPS, menggunakan kota default", "error");
       kotaInput.value = "Kab. Lamongan";
       loadJadwal("1610");
     }
 
   }, (err) => {
     console.error(err);
-    alert("Gagal mendapatkan koordinat GPS");
+    showToast("Gagal mendapatkan koordinat GPS", "error");
   });
+}
+
+function showToast(message, type = "info", duration = 3000) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+
+  toast.className = "toast show " + type;
+
+  setTimeout(() => {
+    toast.className = "toast";
+  }, duration);
 }
 
 // ================= INIT =================
