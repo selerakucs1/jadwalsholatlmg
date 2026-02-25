@@ -31,13 +31,14 @@ Aplikasi Web Jadwal Sholat Digital berbasis API publik dari:
 ---
 
 ## 📂 Struktur Project
-<pre>jadwal-sholat/ 
+<pre>jadwalsholatlmg/ 
   │ 
   ├── index.html 
   ├── style.css 
   ├── script.js 
   ├── manifest.json 
   ├── waktu_192.png 
+  ├── waktu_512.png 
   └── README.md 
   </pre>
 
