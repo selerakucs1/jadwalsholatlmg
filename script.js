@@ -11,10 +11,12 @@ let currentJadwal = null;
 let countdownInterval = null;
 let kotaId = "0266e33d3f546cb5436a10798e657d97";
 let cacheKey = "jadwal_" + kotaId;
+
 // Simpan cache default jika belum ada
 if (!localStorage.getItem(cacheKey)) {
   localStorage.setItem(cacheKey, JSON.stringify({ id: kotaId, lokasi: "Kab. Lamongan" }));
 }
+
 const icons = {
   Subuh: "bi-moon",
   Dzuhur: "bi-sun",
@@ -25,42 +27,60 @@ const icons = {
 
 // ================= LOAD KOTA =================
 async function loadKota() {
-  const res = await fetch("https://api.myquran.com/v3/sholat/kota/semua");
-  const data = await res.json();
+  try {
+    const res = await fetch("https://api.myquran.com/v3/sholat/kota/semua");
+    const data = await res.json();
 
-  kotaList.innerHTML = "";
+    kotaList.innerHTML = "";
+    data.data.forEach(kota => {
+      const option = document.createElement("option");
+      option.value = kota.lokasi;
+      option.dataset.id = kota.id;
+      kotaList.appendChild(option);
+    });
 
-  data.data.forEach(kota => {
-    const option = document.createElement("option");
-    option.value = kota.lokasi;
-    option.dataset.id = kota.id;
-    kotaList.appendChild(option);
-  });
-
-  kotaInput.value = "Kab. Lamongan";
-  loadJadwal(`${kotaId}`);
+    // Pakai cache jika ada
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const c = JSON.parse(cached);
+      kotaInput.value = c.lokasi;
+      loadJadwal(c.id);
+    } else {
+      kotaInput.value = "Kab. Lamongan";
+      loadJadwal(kotaId);
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal load kota, pakai default", "error");
+    kotaInput.value = "Kab. Lamongan";
+    loadJadwal(kotaId);
+  }
 }
 
 // ================= LOAD JADWAL =================
 async function loadJadwal(id) {
-  const now = new Date();
-  const tahun = now.getFullYear();
-  const bulan = String(now.getMonth() + 1).padStart(2, "0");
-  const tanggal = String(now.getDate()).padStart(2, "0");
-  const todayKey = `${tahun}-${bulan}-${tanggal}`;
+  try {
+    const now = new Date();
+    const tahun = now.getFullYear();
+    const bulan = String(now.getMonth() + 1).padStart(2, "0");
+    const tanggal = String(now.getDate()).padStart(2, "0");
+    const todayKey = `${tahun}-${bulan}-${tanggal}`;
 
-  const res = await fetch(
-    `https://api.myquran.com/v3/sholat/jadwal/${id}/${todayKey}`
-  );
-  const data = await res.json();
+    const res = await fetch(
+      `https://api.myquran.com/v3/sholat/jadwal/${id}/${todayKey}`
+    );
+    const data = await res.json();
+    currentJadwal = data.data.jadwal[todayKey];
 
-  currentJadwal = data.data.jadwal[todayKey];
-
-  renderJadwal();
-  startCountdown();
+    renderJadwal();
+    startCountdown();
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal load jadwal, pakai default", "error");
+  }
 }
 
-// ================= RENDER =================
+// ================= RENDER JADWAL =================
 function renderJadwal() {
   if (!currentJadwal) return;
 
@@ -69,14 +89,13 @@ function renderJadwal() {
 
   const list = [
     { nama: "Subuh", jam: currentJadwal.subuh },
-    { nama: isFriday ? "Dzuhur" : "Dzuhur", jam: currentJadwal.dzuhur },
+    { nama: "Dzuhur", jam: currentJadwal.dzuhur },
     { nama: "Ashar", jam: currentJadwal.ashar },
     { nama: "Maghrib", jam: currentJadwal.maghrib },
     { nama: "Isya", jam: currentJadwal.isya }
   ];
 
   jadwalList.innerHTML = "";
-
   list.forEach(w => {
     const div = document.createElement("div");
     div.className = "schedule-item";
@@ -88,7 +107,7 @@ function renderJadwal() {
   });
 }
 
-// ================= COUNTDOWN + HIGHLIGHT (FIX LINTAS HARI) =================
+// ================= COUNTDOWN =================
 function startCountdown() {
   if (countdownInterval) clearInterval(countdownInterval);
 
@@ -105,7 +124,6 @@ function startCountdown() {
       return d;
     };
 
-    // ===== URUTAN WAKTU SHOLAT SEBENARNYA =====
     const waktu = [
       { nama: "Imsak", target: makeDate(currentJadwal.imsak) },
       { nama: "Subuh", target: makeDate(currentJadwal.subuh) },
@@ -117,24 +135,14 @@ function startCountdown() {
       { nama: "Isya", target: makeDate(currentJadwal.isya) }
     ];
 
-    // ===== FIX LINTAS HARI =====
-    // Kalau sekarang lewat Isya → tambahkan 1 hari untuk Imsak & Subuh
     if (now > waktu[waktu.length - 1].target) {
       waktu[0].target = makeDate(currentJadwal.imsak, 1);
       waktu[1].target = makeDate(currentJadwal.subuh, 1);
     }
 
-    // ===== CARI NEXT =====
     let next = waktu.find(w => w.target > now);
+    if (!next) next = { nama: "Imsak", target: makeDate(currentJadwal.imsak, 1) };
 
-    if (!next) {
-      next = {
-        nama: "Imsak",
-        target: makeDate(currentJadwal.imsak, 1)
-      };
-    }
-
-    // ===== COUNTDOWN =====
     let diff = next.target - now;
     if (diff < 0) diff = 0;
 
@@ -146,14 +154,13 @@ function startCountdown() {
       `${String(h).padStart(2, "0")}:` +
       `${String(m).padStart(2, "0")}:` +
       `${String(s).padStart(2, "0")}`;
-
     nextNameEl.textContent = `Menuju ${next.nama}`;
 
     updateActivePrayer(now, waktu);
-
   }, 1000);
 }
 
+// ================= HIGHLIGHT =================
 function updateActivePrayer(now, waktu) {
   const items = document.querySelectorAll(".schedule-item");
   items.forEach(i => i.classList.remove("active"));
@@ -167,18 +174,13 @@ function updateActivePrayer(now, waktu) {
     if (next) {
       if (now >= current.target && now < next.target) {
         const index = tampil.indexOf(current.nama);
-        if (index !== -1 && items[index]) {
-          items[index].classList.add("active");
-        }
+        if (index !== -1 && items[index]) items[index].classList.add("active");
         return;
       }
     } else {
-      // Isya sampai Imsak besok tetap aktif
       if (now >= current.target) {
         const index = tampil.indexOf(current.nama);
-        if (index !== -1 && items[index]) {
-          items[index].classList.add("active");
-        }
+        if (index !== -1 && items[index]) items[index].classList.add("active");
       }
     }
   }
@@ -194,54 +196,43 @@ async function loadRandomAyat() {
     const nomor = d.data.ayat.ayah;
     const surat = d.data.info.surat.nama.id;
 
-    // Tambah spasi di awal & akhir biar loop mulus
     const teks = `  ${arti} — (QS. ${surat}:${nomor})  `;
     const panjang = teks.length;
-    const durasi = Math.max(14, Math.min(38, panjang * 0.20));  
+    const durasi = Math.max(14, Math.min(38, panjang * 0.2));
+
     runningAyatEl.textContent = teks;
     runningAyatEl.style.animation = "none";
     runningAyatEl.offsetHeight;
     runningAyatEl.style.animation = `scrollText ${durasi}s linear infinite`;
-
   } catch (err) {
     console.error("Gagal load ayat:", err);
     runningAyatEl.textContent = "Gagal memuat ayat...";
   }
 }
 
-// ================= LOAD TANGGAL =================
+// ================= TANGGAL =================
 async function loadTanggal() {
   try {
     const res = await fetch("https://api.myquran.com/v3/cal/today?adj=0&tz=Asia%2FJakarta");
     const data = await res.json();
 
-    if (!data?.data?.hijr || !data?.data?.ce) {
-      ceDateEl.textContent = "-";
-      hijrDateEl.textContent = "-";
-      return;
-    }
-
-    ceDateEl.textContent = `${data.data.ce.today} M`?? "-";
-    hijrDateEl.textContent = `${data.data.hijr.day} ${data.data.hijr.monthName} ${data.data.hijr.year} H` ?? "-";
-
+    ceDateEl.textContent = data?.data?.ce?.today ? `${data.data.ce.today} M` : "-";
+    hijrDateEl.textContent = data?.data?.hijr?.day ? `${data.data.hijr.day} ${data.data.hijr.monthName} ${data.data.hijr.year} H` : "-";
   } catch (err) {
-    console.error("Error load tanggal:", err);
+    console.error(err);
     ceDateEl.textContent = "-";
     hijrDateEl.textContent = "-";
   }
 }
 
-// ================= EVENT =================
+// ================= EVENT KOTA =================
 kotaInput.addEventListener("change", function () {
   const value = this.value;
   const options = kotaList.options;
-
   for (let i = 0; i < options.length; i++) {
     if (options[i].value === value) {
       const id = options[i].dataset.id;
       loadJadwal(id);
-
-      // update cacheKey dan localStorage
       cacheKey = "jadwal_" + id;
       localStorage.setItem(cacheKey, JSON.stringify({ id, lokasi: value }));
       break;
@@ -251,16 +242,14 @@ kotaInput.addEventListener("change", function () {
 
 // ================= GPS =================
 async function detectLocation() {
-  // Cek cache dulu
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
     const data = JSON.parse(cached);
-    loadJadwal(data.id || kotaId);
-    kotaInput.value = data.lokasi || "Kab. Lamongan";
-    return; // sudah pakai cache, hentikan fungsi
+    kotaInput.value = data.lokasi;
+    loadJadwal(data.id);
+    return;
   }
 
-  // Jika belum ada cache, cek geolokasi
   if (!navigator.geolocation) {
     showToast("Geolokasi tidak didukung browser", "error");
     kotaInput.value = "Kab. Lamongan";
@@ -273,37 +262,23 @@ async function detectLocation() {
     const lon = pos.coords.longitude;
 
     try {
-      const resGeo = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
-      );
+      const resGeo = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
       const geoData = await resGeo.json();
 
-      const cityName =
-        geoData.address.city ||
-        geoData.address.town ||
-        geoData.address.county ||
-        geoData.address.village;
-
+      const cityName = geoData.address.city || geoData.address.town || geoData.address.county || geoData.address.village;
       if (!cityName) throw new Error("Kota tidak terdeteksi");
 
       const resKota = await fetch("https://api.myquran.com/v3/sholat/kota/semua");
       const kotaListData = await resKota.json();
 
-      let match = kotaListData.data.find(k =>
-        k.lokasi.toLowerCase().includes(cityName.toLowerCase())
-      ) || kotaListData.data.find(k =>
-        cityName.toLowerCase().includes(k.lokasi.toLowerCase())
-      );
+      let match = kotaListData.data.find(k => k.lokasi.toLowerCase().includes(cityName.toLowerCase())) ||
+                  kotaListData.data.find(k => cityName.toLowerCase().includes(k.lokasi.toLowerCase()));
 
       if (match) {
         kotaInput.value = match.lokasi;
         loadJadwal(match.id);
-
-        // Simpan ke cache agar klik berikutnya aman
-        const key = "jadwal_" + match.id;
-        localStorage.setItem(key, JSON.stringify({ id: match.id, lokasi: match.lokasi }));
-        cacheKey = key;
-
+        cacheKey = "jadwal_" + match.id;
+        localStorage.setItem(cacheKey, JSON.stringify({ id: match.id, lokasi: match.lokasi }));
         showToast(`Lokasi terdeteksi: ${match.lokasi}`, "success");
       } else {
         throw new Error("Kota tidak ada di database MyQuran");
@@ -314,8 +289,6 @@ async function detectLocation() {
       showToast("Gagal memproses lokasi GPS, pakai kota default", "error");
       kotaInput.value = "Kab. Lamongan";
       loadJadwal(kotaId);
-
-      // Simpan cache default
       localStorage.setItem(cacheKey, JSON.stringify({ id: kotaId, lokasi: "Kab. Lamongan" }));
     }
 
@@ -324,21 +297,16 @@ async function detectLocation() {
     showToast("Gagal mendapatkan koordinat GPS, pakai kota default", "error");
     kotaInput.value = "Kab. Lamongan";
     loadJadwal(kotaId);
-
-    // Simpan cache default
     localStorage.setItem(cacheKey, JSON.stringify({ id: kotaId, lokasi: "Kab. Lamongan" }));
   });
 }
 
+// ================= TOAST =================
 function showToast(message, type = "info", duration = 3000) {
   const toast = document.getElementById("toast");
   toast.textContent = message;
-
   toast.className = "toast show " + type;
-
-  setTimeout(() => {
-    toast.className = "toast";
-  }, duration);
+  setTimeout(() => toast.className = "toast", duration);
 }
 
 // ================= INIT =================
