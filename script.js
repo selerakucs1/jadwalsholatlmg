@@ -215,7 +215,7 @@ async function loadTanggal() {
       return;
     }
 
-    ceDateEl.textContent = `$(data.data.ce.today) M`?? "-";
+    ceDateEl.textContent = `${data.data.ce.today} M`?? "-";
     hijrDateEl.textContent = `${data.data.hijr.day} ${data.data.hijr.monthName} ${data.data.hijr.year} H` ?? "-";
 
   } catch (err) {
