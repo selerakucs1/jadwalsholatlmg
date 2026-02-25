@@ -237,6 +237,59 @@ kotaInput.addEventListener("change", function () {
   }
 });
 
+// ================= GPS =================
+async function detectLocation() {
+  if (!navigator.geolocation) return alert("Geolokasi tidak didukung browser");
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+
+    try {
+      const resGeo = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+      );
+      const geoData = await resGeo.json();
+      const cityName =
+        geoData.address.city ||
+        geoData.address.town ||
+        geoData.address.county ||
+        geoData.address.village;
+
+      if (!cityName) return alert("Gagal mendeteksi kota");
+
+      const resKota = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
+      const kotaListData = await resKota.json();
+
+      let match = kotaListData.data.find(
+        k => k.lokasi.toLowerCase().includes(cityName.toLowerCase())
+      );
+
+      if (!match) {
+        match = kotaListData.data.find(k =>
+          cityName.toLowerCase().includes(k.lokasi.toLowerCase())
+        );
+      }
+
+      if (match) {
+        kotaInput.value = match.lokasi;
+        loadJadwal(match.id);
+        alert(`Lokasi terdeteksi: ${match.lokasi}`);
+      } else {
+        alert("Kota tidak ditemukan di database MyQuran");
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Gagal memproses lokasi GPS");
+    }
+
+  }, (err) => {
+    console.error(err);
+    alert("Gagal mendapatkan koordinat GPS");
+  });
+}
+
 // ================= INIT =================
 loadKota();
 loadTanggal();
