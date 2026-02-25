@@ -1,45 +1,70 @@
-🕌 Jadwal Sholat Web App
+# 🕌 Jadwal Sholat Web App
 
 Aplikasi Web Jadwal Sholat Digital berbasis API publik dari:
 
-🌐 https://api.myquran.com
+- https://api.myquran.com  
+- https://bimasislam.kemenag.go.id  
 
-🌐 https://bimasislam.kemenag.go.id
+---
 
-Menampilkan:
+## ✨ Fitur
 
-Jadwal sholat harian
+- ✅ Pilih kota (autocomplete)
+- ✅ Deteksi lokasi (geolocation)
+- ✅ Countdown menuju waktu sholat berikutnya
+- ✅ Highlight waktu aktif (lintas hari aman)
+- ✅ Support Imsak
+- ✅ Tanggal Masehi & Hijriah otomatis
+- ✅ Running ayat Al-Qur’an acak (auto refresh)
+- ✅ Dark mode modern UI
+- ✅ Progressive Web App (Installable)
 
-Countdown menuju waktu berikutnya
+---
 
-Highlight waktu aktif
+## 📂 Struktur Project
+jadwalsholatlmg/
+│
+├── index.html
+├── style.css
+├── script.js
+├── manifest.json
+├── waktu_192.png
+└── README.md
 
-Tanggal Masehi & Hijriah
 
-Running text ayat Al-Qur’an acak
+---
 
-PWA (Installable App)
+## 🚀 Cara Menjalankan
 
-✨ Fitur
+### Clone Repository
 
-✅ Pilih kota (autocomplete)
-✅ Deteksi lokasi (geolocation)
-✅ Countdown real-time
-✅ Highlight waktu aktif (lintas hari aman)
-✅ Support Imsak
-✅ Tanggal Hijriah otomatis
-✅ Running ayat otomatis refresh
-✅ Dark mode modern
-✅ Progressive Web App (PWA ready)
+```
+bash
+git clone https://github.com/USERNAME/jadwal-sholat.git
+cd jadwal-sholat
+```
 
-🚀 Demo
+## 🎨 Tampilan
 
-Deploy via:
+- Dark modern glass effect
+- Highlight otomatis waktu aktif
+- Countdown real-time
+- Responsive (Mobile & Desktop)
 
-GitHub Pages
+## 📱 PWA Support
 
-Vercel
+Aplikasi dapat di-install seperti aplikasi Android/iOS melalui browser karena sudah mendukung:
+- manifest.json
+- theme-color
+- standalone display mode
 
-Netlify
+## 🛡️ Catatan
 
-VPS / Shared Hosting
+- Tidak menggunakan backend
+- Tidak menyimpan data pengguna
+- Bergantung pada API publik
+- Cocok untuk hosting gratis (GitHub Pages, Netlify, Vercel)
+
+## 👨‍💻 Author
+Fabio Karnovaro
+© 2026
