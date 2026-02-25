@@ -42,13 +42,14 @@ async function loadJadwal(id) {
   const tahun = now.getFullYear();
   const bulan = String(now.getMonth() + 1).padStart(2, "0");
   const tanggal = String(now.getDate()).padStart(2, "0");
+  const todayKey = `${tahun}-${bulan}-${tanggal}`;
 
   const res = await fetch(
-    `https://api.myquran.com/v3/sholat/jadwal/${id}/${tahun}-${bulan}-${tanggal}`
+    `https://api.myquran.com/v3/sholat/jadwal/${id}/${todayKey}`
   );
   const data = await res.json();
 
-  currentJadwal = data.data.jadwal;
+  currentJadwal = data.data.jadwal[todayKey];
 
   renderJadwal();
   startCountdown();
