@@ -9,6 +9,7 @@ const runningAyatEl = document.getElementById("runningAyat");
 
 let currentJadwal = null;
 let countdownInterval = null;
+let cacheKey = "Kab. Lamongan";
 
 const icons = {
   Subuh: "bi-moon",
@@ -241,7 +242,6 @@ kotaInput.addEventListener("change", function () {
 
 // ================= GPS =================
 async function detectLocation() {
-  const cacheKey = "lokasiUser";
   const cached = localStorage.getItem(cacheKey);
 
   if (cached) {
