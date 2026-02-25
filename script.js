@@ -11,7 +11,7 @@ let currentJadwal = null;
 let countdownInterval = null;
 let kotaId = "0266e33d3f546cb5436a10798e657d97";
 let cacheKey = "jadwal_" + kotaId;
-localStorage.setItem(cacheKey, JSON.stringify({ lokasi: "..." }));
+localStorage.setItem(cacheKey, JSON.stringify({ Lokasi: `${kotaId}` }));
 const icons = {
   Subuh: "bi-moon",
   Dzuhur: "bi-sun",
@@ -35,7 +35,7 @@ async function loadKota() {
   });
 
   kotaInput.value = "Kab. Lamongan";
-  loadJadwal("0266e33d3f546cb5436a10798e657d97");
+  loadJadwal(`${kotaId}`);
 }
 
 // ================= LOAD JADWAL =================
@@ -292,7 +292,7 @@ async function detectLocation() {
       console.error(err);
       showToast("Gagal memproses lokasi GPS, menggunakan kota default", "error");
       kotaInput.value = "Kab. Lamongan";
-      loadJadwal("0266e33d3f546cb5436a10798e657d97");
+      loadJadwal(`${kotaId}`);
     }
 
   }, (err) => {
