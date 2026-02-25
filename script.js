@@ -11,7 +11,10 @@ let currentJadwal = null;
 let countdownInterval = null;
 let kotaId = "0266e33d3f546cb5436a10798e657d97";
 let cacheKey = "jadwal_" + kotaId;
-localStorage.setItem(cacheKey, JSON.stringify({ Lokasi: `${kotaId}` }));
+// Simpan cache default jika belum ada
+if (!localStorage.getItem(cacheKey)) {
+  localStorage.setItem(cacheKey, JSON.stringify({ id: kotaId, lokasi: "Kab. Lamongan" }));
+}
 const icons = {
   Subuh: "bi-moon",
   Dzuhur: "bi-sun",
@@ -235,7 +238,12 @@ kotaInput.addEventListener("change", function () {
 
   for (let i = 0; i < options.length; i++) {
     if (options[i].value === value) {
-      loadJadwal(options[i].dataset.id);
+      const id = options[i].dataset.id;
+      loadJadwal(id);
+
+      // update cacheKey dan localStorage
+      cacheKey = "jadwal_" + id;
+      localStorage.setItem(cacheKey, JSON.stringify({ id, lokasi: value }));
       break;
     }
   }
@@ -243,14 +251,22 @@ kotaInput.addEventListener("change", function () {
 
 // ================= GPS =================
 async function detectLocation() {
+  // Cek cache dulu
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
     const data = JSON.parse(cached);
-    loadJadwal(data.id || "0266e33d3f546cb5436a10798e657d97");
-  } else {
-    detectLocation(); // panggil GPS
+    loadJadwal(data.id || kotaId);
+    kotaInput.value = data.lokasi || "Kab. Lamongan";
+    return; // sudah pakai cache, hentikan fungsi
   }
-  if (!navigator.geolocation) return showToast("Geolokasi tidak didukung browser", "error");
+
+  // Jika belum ada cache, cek geolokasi
+  if (!navigator.geolocation) {
+    showToast("Geolokasi tidak didukung browser", "error");
+    kotaInput.value = "Kab. Lamongan";
+    loadJadwal(kotaId);
+    return;
+  }
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
     const lat = pos.coords.latitude;
@@ -258,8 +274,7 @@ async function detectLocation() {
 
     try {
       const resGeo = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
-        { headers: { "User-Agent": "AplikasiSholat/1.0", "Accept-Language": "id" } }
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
       );
       const geoData = await resGeo.json();
 
@@ -269,35 +284,49 @@ async function detectLocation() {
         geoData.address.county ||
         geoData.address.village;
 
-      if (!cityName) return showToast("Gagal mendeteksi kota", "error");
+      if (!cityName) throw new Error("Kota tidak terdeteksi");
 
       const resKota = await fetch("https://api.myquran.com/v3/sholat/kota/semua");
       const kotaListData = await resKota.json();
 
-      let match = kotaListData.data.find(k => k.lokasi.toLowerCase().includes(cityName.toLowerCase()));
-
-      if (!match) {
-        match = kotaListData.data.find(k => cityName.toLowerCase().includes(k.lokasi.toLowerCase()));
-      }
+      let match = kotaListData.data.find(k =>
+        k.lokasi.toLowerCase().includes(cityName.toLowerCase())
+      ) || kotaListData.data.find(k =>
+        cityName.toLowerCase().includes(k.lokasi.toLowerCase())
+      );
 
       if (match) {
         kotaInput.value = match.lokasi;
         loadJadwal(match.id);
+
+        // Simpan ke cache agar klik berikutnya aman
+        const key = "jadwal_" + match.id;
+        localStorage.setItem(key, JSON.stringify({ id: match.id, lokasi: match.lokasi }));
+        cacheKey = key;
+
         showToast(`Lokasi terdeteksi: ${match.lokasi}`, "success");
       } else {
-        showToast("Kota tidak ditemukan di database MyQuran", "info");
+        throw new Error("Kota tidak ada di database MyQuran");
       }
 
     } catch (err) {
       console.error(err);
-      showToast("Gagal memproses lokasi GPS, menggunakan kota default", "error");
+      showToast("Gagal memproses lokasi GPS, pakai kota default", "error");
       kotaInput.value = "Kab. Lamongan";
-      loadJadwal(`${kotaId}`);
+      loadJadwal(kotaId);
+
+      // Simpan cache default
+      localStorage.setItem(cacheKey, JSON.stringify({ id: kotaId, lokasi: "Kab. Lamongan" }));
     }
 
   }, (err) => {
     console.error(err);
-    showToast("Gagal mendapatkan koordinat GPS", "error");
+    showToast("Gagal mendapatkan koordinat GPS, pakai kota default", "error");
+    kotaInput.value = "Kab. Lamongan";
+    loadJadwal(kotaId);
+
+    // Simpan cache default
+    localStorage.setItem(cacheKey, JSON.stringify({ id: kotaId, lokasi: "Kab. Lamongan" }));
   });
 }
 
@@ -316,3 +345,4 @@ function showToast(message, type = "info", duration = 3000) {
 loadTanggal().then(() => loadKota());
 loadRandomAyat();
 setInterval(loadRandomAyat, 60000);
+detectLocation();
