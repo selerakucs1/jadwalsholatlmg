@@ -247,8 +247,14 @@ async function detectLocation() {
 
     try {
       const resGeo = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
-      );
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
+        {
+          headers: {
+            "User-Agent": "AplikasiSholat/1.0",
+            "Accept-Language": "id"
+          }
+        }
+        );
       const geoData = await resGeo.json();
       const cityName =
         geoData.address.city ||
@@ -281,7 +287,9 @@ async function detectLocation() {
 
     } catch (err) {
       console.error(err);
-      alert("Gagal memproses lokasi GPS");
+      alert("Gagal memproses lokasi GPS, menggunakan kota default");
+      kotaInput.value = "Kab. Lamongan";
+      loadJadwal("1610");
     }
 
   }, (err) => {
