@@ -314,3 +314,5 @@ loadTanggal().then(() => loadKota());
 loadRandomAyat();
 setInterval(loadRandomAyat, 60000);
 detectLocation();
+
+//============ END ========================
