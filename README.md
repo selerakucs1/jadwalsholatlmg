@@ -36,6 +36,7 @@ Aplikasi Web Jadwal Sholat Digital berbasis API publik dari:
   ├── index.html 
   ├── style.css 
   ├── script.js 
+  ├── service-worker.js
   ├── manifest.json 
   ├── waktu_192.png 
   ├── waktu_512.png 
