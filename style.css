@@ -263,23 +263,20 @@ h2 {
 }
 
 .toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  padding: 12px 20px;
+  margin-top: 8px; /* jarak dari tanggal */
+  display: inline-block;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 14px;
   color: #fff;
   opacity: 0;
-  pointer-events: none;
+  transform: translateY(10px);
   transition: opacity 0.4s, transform 0.4s;
-  z-index: 9999;
 }
 
 .toast.show {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 /* Variants */
