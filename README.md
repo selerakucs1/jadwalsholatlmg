@@ -18,11 +18,10 @@ Aplikasi Web Jadwal Sholat Digital berbasis API publik dari:
 
 ## ✨ Fitur
 
-- ✅ Pilih kota (autocomplete)
+- ✅ Pilihan kota (autocomplete)
 - ✅ Deteksi lokasi (geolocation)
 - ✅ Countdown menuju waktu sholat berikutnya
 - ✅ Highlight waktu aktif (lintas hari aman)
-- ✅ Support Imsak
 - ✅ Tanggal Masehi & Hijriah otomatis
 - ✅ Running ayat Al-Qur’an acak (auto refresh)
 - ✅ Dark mode modern UI
