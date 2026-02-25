@@ -9,8 +9,9 @@ const runningAyatEl = document.getElementById("runningAyat");
 
 let currentJadwal = null;
 let countdownInterval = null;
-let cacheKey = "Kab. Lamongan";
-
+let kotaId = "0266e33d3f546cb5436a10798e657d97";
+let cacheKey = "jadwal_" + kotaId;
+localStorage.setItem(cacheKey, JSON.stringify({ lokasi: "..." }));
 const icons = {
   Subuh: "bi-moon",
   Dzuhur: "bi-sun",
@@ -243,14 +244,11 @@ kotaInput.addEventListener("change", function () {
 // ================= GPS =================
 async function detectLocation() {
   const cached = localStorage.getItem(cacheKey);
-
   if (cached) {
-    // ambil dari cache → aman, tidak fetch ulang
     const data = JSON.parse(cached);
-    kotaInput.value = data.lokasi;
-    loadJadwal(data.id);
-    showToast(`Lokasi terdeteksi dari cache: ${data.lokasi}`, "success");
-    return;
+    loadJadwal(data.id || "0266e33d3f546cb5436a10798e657d97");
+  } else {
+    detectLocation(); // panggil GPS
   }
   if (!navigator.geolocation) return showToast("Geolokasi tidak didukung browser", "error");
 
