@@ -241,6 +241,17 @@ kotaInput.addEventListener("change", function () {
 
 // ================= GPS =================
 async function detectLocation() {
+  const cacheKey = "lokasiUser";
+  const cached = localStorage.getItem(cacheKey);
+
+  if (cached) {
+    // ambil dari cache → aman, tidak fetch ulang
+    const data = JSON.parse(cached);
+    kotaInput.value = data.lokasi;
+    loadJadwal(data.id);
+    showToast(`Lokasi terdeteksi dari cache: ${data.lokasi}`, "success");
+    return;
+  }
   if (!navigator.geolocation) return showToast("Geolokasi tidak didukung browser", "error");
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
