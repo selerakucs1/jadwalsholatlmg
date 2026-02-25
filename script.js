@@ -212,13 +212,16 @@ async function loadTanggal() {
     const res = await fetch("https://api.myquran.com/v3/cal/today?adj=0&tz=Asia%2FJakarta");
     const data = await res.json();
 
-    if (!data?.data?.hijr || !data?.data?.ce) return;
+    if (!data?.data?.hijr || !data?.data?.ce) {
+      ceDateEl.textContent = "-";
+      hijrDateEl.textContent = "-";
+      return;
+    }
 
-    const { day, monthName, year } = data.data.hijr;
-    const ce = data.data.ce.today;
+    // Gunakan field 'today' langsung supaya sesuai API
+    ceDateEl.textContent = data.data.ce.today ?? "-";
+    hijrDateEl.textContent = data.data.hijr.today ?? "-";
 
-    ceDateEl.textContent = ce ?? "-";
-    hijrDateEl.textContent = `${day} ${monthName} ${year} H`;
   } catch (err) {
     console.error("Error load tanggal:", err);
     ceDateEl.textContent = "-";
