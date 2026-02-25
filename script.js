@@ -20,7 +20,7 @@ const icons = {
 
 // ================= LOAD KOTA =================
 async function loadKota() {
-  const res = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
+  const res = await fetch("https://api.myquran.com/v3/sholat/kota/semua");
   const data = await res.json();
 
   kotaList.innerHTML = "";
@@ -33,7 +33,7 @@ async function loadKota() {
   });
 
   kotaInput.value = "Kab. Lamongan";
-  loadJadwal("1610");
+  loadJadwal("0266e33d3f546cb5436a10798e657d97");
 }
 
 // ================= LOAD JADWAL =================
@@ -44,7 +44,7 @@ async function loadJadwal(id) {
   const tanggal = String(now.getDate()).padStart(2, "0");
 
   const res = await fetch(
-    `https://api.myquran.com/v2/sholat/jadwal/${id}/${tahun}/${bulan}/${tanggal}`
+    `https://api.myquran.com/v3/sholat/jadwal/${id}/${tahun}-${bulan}-${tanggal}`
   );
   const data = await res.json();
 
@@ -261,7 +261,7 @@ async function detectLocation() {
 
       if (!cityName) return showToast("Gagal mendeteksi kota", "error");
 
-      const resKota = await fetch("https://api.myquran.com/v2/sholat/kota/semua");
+      const resKota = await fetch("https://api.myquran.com/v3/sholat/kota/semua");
       const kotaListData = await resKota.json();
 
       let match = kotaListData.data.find(k => k.lokasi.toLowerCase().includes(cityName.toLowerCase()));
@@ -282,7 +282,7 @@ async function detectLocation() {
       console.error(err);
       showToast("Gagal memproses lokasi GPS, menggunakan kota default", "error");
       kotaInput.value = "Kab. Lamongan";
-      loadJadwal("1610");
+      loadJadwal("0266e33d3f546cb5436a10798e657d97");
     }
 
   }, (err) => {
