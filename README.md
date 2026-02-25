@@ -50,7 +50,7 @@ Aplikasi Web Jadwal Sholat Digital berbasis API publik dari:
 ### Clone Repository
 
 ```
-git clone https://github.com/USERNAME/jadwal-sholat.git
+git clone https://github.com/selerakucs1/jadwalsholatlmg.git
 cd jadwalsholatlmg
 index.html
 ```
