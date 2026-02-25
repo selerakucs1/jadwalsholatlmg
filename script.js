@@ -50,8 +50,8 @@ async function loadJadwal(id) {
 
   currentJadwal = data.data.jadwal;
 
-  ceDateEl.textContent = currentJadwal.tanggal;
-  hijrDateEl.textContent = currentJadwal.hijriah;
+  //ceDateEl.textContent = currentJadwal.tanggal;
+  //hijrDateEl.textContent = currentJadwal.hijriah;
 
   renderJadwal();
   startCountdown();
