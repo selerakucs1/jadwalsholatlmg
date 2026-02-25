@@ -18,14 +18,14 @@
   <h4 class="text-center mb-3 fw-bold text-warning">
     Jadwal Sholat
   </h4>
-  <div class="text-center mb-3 small text-secondary">
-    <span id="ceDate"></span> / <span id="hijrDate"></span>
+  <div class="text-center mb-3 small text-secondary" id="tanggalWrapper">
+  <span id="ceDate"></span> / <span id="hijrDate"></span>
+  <div id="toast" class="toast"></div>
   </div>
   <!-- PILIH KOTA -->
     <div class="form-group">
       <input type="text" id="kotaInput" placeholder="Cari kota..." list="kotaList">
       <datalist id="kotaList"></datalist>
-      <div id="toast" class="toast"></div>
       <button class="btn-lokasi" onclick="detectLocation()">
         <i class="bi bi-geo-alt-fill"></i>
       </button>
