@@ -207,21 +207,23 @@ async function loadRandomAyat() {
 }
 
 // ================= LOAD TANGGAL =================
-function loadTanggal() {
-  fetch("https://api.myquran.com/v3/cal/today?adj=0&tz=Asia%2FJakarta")
-    .then(r => r.json())
-    .then(res => {
-      if (!res?.data?.hijr || !res?.data?.ce) return;
+async function loadTanggal() {
+  try {
+    const res = await fetch("https://api.myquran.com/v3/cal/today?adj=0&tz=Asia%2FJakarta");
+    const data = await res.json();
 
-      const { day, monthName, year } = res.data.hijr;
-      const ce = res.data.ce.today;
+    if (!data?.data?.hijr || !data?.data?.ce) return;
 
-      ceDateEl.textContent = ce ?? "-";
-      hijrDateEl.textContent = `${day} ${monthName} ${year} H`;
-    })
-    .catch(err => {
-      console.error("Error load tanggal:", err);
-    });
+    const { day, monthName, year } = data.data.hijr;
+    const ce = data.data.ce.today;
+
+    ceDateEl.textContent = ce ?? "-";
+    hijrDateEl.textContent = `${day} ${monthName} ${year} H`;
+  } catch (err) {
+    console.error("Error load tanggal:", err);
+    ceDateEl.textContent = "-";
+    hijrDateEl.textContent = "-";
+  }
 }
 
 // ================= EVENT =================
@@ -302,7 +304,6 @@ function showToast(message, type = "info", duration = 3000) {
 }
 
 // ================= INIT =================
-loadKota();
-loadTanggal();
+loadTanggal().then(() => loadKota());
 loadRandomAyat();
 setInterval(loadRandomAyat, 60000);
