@@ -2,7 +2,7 @@
 
 Aplikasi Web Jadwal Sholat Digital berbasis API publik dari:
 
-- https://api.myquran.com  
+- https://api.myquran.com
 - https://bimasislam.kemenag.go.id  
 
 
@@ -10,8 +10,8 @@ Aplikasi Web Jadwal Sholat Digital berbasis API publik dari:
 
 | Endpoint | Fungsi |
 |----------|--------|
-| [api.myquran.com/v2/sholat/kota/semua](https://api.myquran.com/v2/sholat/kota/semua) | Daftar kota |
-| [api.myquran.com/v2/sholat/jadwal](https://api.myquran.com/v2/sholat/jadwal) | Jadwal harian |
+| [api.myquran.com/v3/sholat/kota/semua](https://api.myquran.com/v3/sholat/kota/semua) | Daftar kota |
+| [api.myquran.com/v3/sholat/jadwal](https://api.myquran.com/v3/sholat/jadwal) | Jadwal harian |
 | [api.myquran.com/v2/quran/ayat/acak](https://api.myquran.com/v2/quran/ayat/acak) | Ayat acak |
 | [api.myquran.com/v3/cal/today](https://api.myquran.com/v3/cal/today) | Tanggal Hijriah |
 ---
