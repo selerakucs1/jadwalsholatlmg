@@ -11,6 +11,7 @@ let currentJadwal = null;
 let countdownInterval = null;
 let kotaId = "0266e33d3f546cb5436a10798e657d97";
 let cacheKey = "jadwal_" + kotaId;
+let lastDate = new Date().toDateString();
 
 // Simpan cache default jika belum ada
 if (!localStorage.getItem(cacheKey)) {
@@ -64,19 +65,25 @@ async function loadJadwal(id) {
     const tahun = now.getFullYear();
     const bulan = String(now.getMonth() + 1).padStart(2, "0");
     const tanggal = String(now.getDate()).padStart(2, "0");
+    const monthKey = `jadwal_${id}_${tahun}_${bulan}`;
     const todayKey = `${tahun}-${bulan}-${tanggal}`;
+    let monthData = localStorage.getItem(monthKey);
 
-    const res = await fetch(
-      `https://api.myquran.com/v3/sholat/jadwal/${id}/${todayKey}`
-    );
-    const data = await res.json();
-    currentJadwal = data.data.jadwal[todayKey];
-
+    if (!monthData) {
+      const res = await fetch(
+        `https://api.myquran.com/v3/sholat/jadwal/${id}/${tahun}/${bulan}`
+      );
+      const data = await res.json();
+      monthData = JSON.stringify(data.data.jadwal);
+      localStorage.setItem(monthKey, monthData);
+    }
+    const jadwalBulan = JSON.parse(monthData);
+    currentJadwal = jadwalBulan[todayKey];
     renderJadwal();
     startCountdown();
   } catch (err) {
     console.error(err);
-    showToast("Gagal load jadwal, pakai default", "error");
+    showToast("Gagal load jadwal", "error");
   }
 }
 
@@ -88,12 +95,12 @@ function renderJadwal() {
   const isFriday = now.getDay() === 5;
 
   const list = [
-    { nama: "Subuh", jam: currentJadwal.subuh },
-    { nama: "Dzuhur", jam: currentJadwal.dzuhur },
-    { nama: "Ashar", jam: currentJadwal.ashar },
-    { nama: "Maghrib", jam: currentJadwal.maghrib },
-    { nama: "Isya", jam: currentJadwal.isya }
-  ];
+  { nama: "Subuh", jam: currentJadwal.subuh },
+  { nama: isFriday ? "Jumat" : "Dzuhur", jam: currentJadwal.dzuhur },
+  { nama: "Ashar", jam: currentJadwal.ashar },
+  { nama: "Maghrib", jam: currentJadwal.maghrib },
+  { nama: "Isya", jam: currentJadwal.isya }
+];
 
   jadwalList.innerHTML = "";
   list.forEach(w => {
@@ -225,6 +232,23 @@ async function loadTanggal() {
   }
 }
 
+function scheduleMidnightRefresh() {
+  const now = new Date();
+  const midnight = new Date();
+  midnight.setHours(24, 0, 0, 0);
+  const ms = midnight - now;
+
+  setTimeout(() => {
+    const cached = JSON.parse(localStorage.getItem(cacheKey));
+    if (cached) {
+      loadJadwal(cached.id);
+      loadTanggal();
+      renderJadwal();
+    }
+    scheduleMidnightRefresh();
+  }, ms);
+}
+
 // ================= EVENT KOTA =================
 kotaInput.addEventListener("change", function () {
   const value = this.value;
@@ -313,6 +337,8 @@ function showToast(message, type = "info", duration = 3000) {
 loadTanggal().then(() => loadKota());
 loadRandomAyat();
 setInterval(loadRandomAyat, 60000);
+setInterval(() => location.reload(), 21600000);
+scheduleMidnightRefresh();
 detectLocation();
 
 //============ END ========================
