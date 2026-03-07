@@ -78,7 +78,11 @@ async function loadJadwal(id) {
       localStorage.setItem(monthKey, monthData);
     }
     const jadwalBulan = JSON.parse(monthData);
-    currentJadwal = jadwalBulan[todayKey];
+    // cari tanggal hari ini
+    currentJadwal = jadwalBulan.find(j => j.tanggal === todayKey);
+    if (!currentJadwal) {
+      throw new Error("Jadwal hari ini tidak ditemukan");
+    }
     renderJadwal();
     startCountdown();
   } catch (err) {
@@ -333,6 +337,18 @@ function showToast(message, type = "info", duration = 3000) {
   setTimeout(() => toast.className = "toast", duration);
 }
 
+//================ Kebersihan ==================
+function cleanOldCache() {
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}_${String(now.getMonth()+1).padStart(2,"0")}`;
+
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("jadwal_") && !key.includes(thisMonth)) {
+      localStorage.removeItem(key);
+    }
+  });
+}
+
 // ================= INIT =================
 loadTanggal().then(() => loadKota());
 loadRandomAyat();
@@ -340,5 +356,6 @@ setInterval(loadRandomAyat, 60000);
 setInterval(() => location.reload(), 21600000);
 scheduleMidnightRefresh();
 detectLocation();
+cleanOldCache();
 
 //============ END ========================
