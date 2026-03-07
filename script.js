@@ -71,7 +71,7 @@ async function loadJadwal(id) {
 
     if (!monthData) {
       const res = await fetch(
-        `https://api.myquran.com/v3/sholat/jadwal/${id}/${tahun}/${bulan}`
+        `https://api.myquran.com/v3/sholat/jadwal/${id}/${tahun}-${bulan}`
       );
       const data = await res.json();
       monthData = JSON.stringify(data.data.jadwal);
