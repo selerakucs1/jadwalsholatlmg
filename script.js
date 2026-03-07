@@ -68,7 +68,6 @@ async function loadJadwal(id) {
     const monthKey = `jadwal_${id}_${tahun}_${bulan}`;
     const todayKey = `${tahun}-${bulan}-${tanggal}`;
     let monthData = localStorage.getItem(monthKey);
-
     if (!monthData) {
       const res = await fetch(
         `https://api.myquran.com/v3/sholat/jadwal/${id}/${tahun}-${bulan}`
@@ -78,8 +77,8 @@ async function loadJadwal(id) {
       localStorage.setItem(monthKey, monthData);
     }
     const jadwalBulan = JSON.parse(monthData);
-    // cari tanggal hari ini
-    currentJadwal = jadwalBulan.find(j => j.tanggal === todayKey);
+    // ambil jadwal hari ini
+    currentJadwal = jadwalBulan[todayKey];
     if (!currentJadwal) {
       throw new Error("Jadwal hari ini tidak ditemukan");
     }
