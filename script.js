@@ -80,8 +80,9 @@ async function loadJadwal(id) {
     // ambil jadwal hari ini
     currentJadwal = jadwalBulan[todayKey];
     if (!currentJadwal) {
-      throw new Error("Jadwal hari ini tidak ditemukan");
-    }
+      const keys = Object.keys(jadwalBulan);
+      currentJadwal = jadwalBulan[keys[keys.length - 1]];
+  }
     renderJadwal();
     startCountdown();
   } catch (err) {
